@@ -2,7 +2,7 @@ apply plugin: 'konan'
 
 konan.targets = ['macbook', 'linux']
 
-def localMavenRepo="file://" + new File(System.properties['user.home']) + '/.m2-kliban'
+def localMavenRepo="file://${new File(System.properties['user.home'] as String)}/.m2-kliban"
 
 repositories {
     maven {
@@ -13,7 +13,7 @@ repositories {
 konanArtifacts {
     program('Curl') {
         dependencies {
-            artifactCurl_MACBOOK 'org.jetbrains.kotlin.native:libcurl:1.0'
+            artifactCurl_macbook 'org.jetbrains.kotlin.native:libcurl:1.0'
         }
     }
 }
