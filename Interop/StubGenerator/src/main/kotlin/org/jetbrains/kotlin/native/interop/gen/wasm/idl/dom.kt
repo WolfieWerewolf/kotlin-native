@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.native.interop.gen.wasm.idl
 
 // This shall be an output of Web IDL parser.
 val idlDom = listOf(
-    Interface("Context",
+    Interface("CanvasRenderingContext2D",
         Attribute("lineWidth", idlInt),
         Attribute("fillStyle", idlString),
         Attribute("strokeStyle", idlString),
@@ -16,6 +16,14 @@ val idlDom = listOf(
         Operation("fill", idlVoid),
         Operation("closePath", idlVoid)
     ),
+        Interface("WebGLRenderingContext",
+                Attribute("width", idlInt),
+                Attribute("height", idlInt),
+                Attribute("COLOR_BUFFER_BIT", idlInt),
+
+                Operation("clearColor", idlVoid, Arg("r", idlInt), Arg("g", idlInt), Arg("b", idlInt), Arg("a", idlInt)),
+                Operation("clear", idlVoid, Arg("mask", idlInt))
+                ),
     Interface("DOMRect",
         Attribute("left", idlInt),
         Attribute("right", idlInt),
@@ -23,7 +31,8 @@ val idlDom = listOf(
         Attribute("bottom", idlInt)
     ),
     Interface("Canvas",
-        Operation("getContext", idlInterfaceRef("Context"), Arg("context", idlString)),
+        //Operation("getContext", idlInterfaceRef("CanvasRenderingContext2D"), Arg("context", idlString)),
+            Operation("getContext", idlInterfaceRef("WebGLRenderingContext"), Arg("context", idlString)),
         Operation("getBoundingClientRect", idlInterfaceRef("DOMRect"))
     ),
     Interface("Document",
