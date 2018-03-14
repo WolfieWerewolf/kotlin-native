@@ -21,18 +21,21 @@ import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputFile
+import org.gradle.api.artifacts.PublishArtifact
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.Usage
+import org.gradle.api.internal.artifacts.configurations.DefaultConfiguration
+import org.gradle.api.tasks.*
+import org.gradle.language.cpp.CppBinary
+import org.gradle.language.cpp.internal.NativeVariant
+import org.gradle.nativeplatform.Linkage
+import org.gradle.platform.base.Variant
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.plugin.KonanArtifactSpec
-import org.jetbrains.kotlin.gradle.plugin.KonanArtifactWithLibrariesSpec
-import org.jetbrains.kotlin.gradle.plugin.KonanLibrariesSpec
-import org.jetbrains.kotlin.gradle.plugin.konanTargets
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.util.*
 
 internal val Project.host
     get() = HostManager.host.visibleName
@@ -83,6 +86,31 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
         this.destinationDir = destinationDir
         this.artifactName = artifactName
         configuration = project.configurations.create("artifact${artifactName}_${target.name}")
+        configuration.attributes{
+            it.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, Usage.NATIVE_LINK))
+            it.attribute(CppBinary.LINKAGE_ATTRIBUTE, Linkage.STATIC)
+            it.attribute(CppBinary.OPTIMIZED_ATTRIBUTE, false)
+            it.attribute(CppBinary.DEBUGGABLE_ATTRIBUTE, false)
+        }
+
+        project.pluginManager.withPlugin("maven-publish") {
+
+            //configuration.files.add(artifact)
+            configuration.artifacts.add(object: PublishArtifact {
+                override fun getName() = artifact.name
+                override fun getExtension() = if (artifactSuffix.startsWith('.')) artifactSuffix.substring(1) else artifactSuffix
+                override fun getType() = artifactSuffix
+                override fun getClassifier():String? = target.name
+                override fun getFile() = artifact
+                override fun getDate() = Date(artifact.lastModified())
+                override fun getBuildDependencies(): TaskDependency = this@KonanArtifactTask.taskDependencies
+            })
+            val objectFactory = project.objects
+            val linkUsage = objectFactory.named(Usage::class.java, Usage.NATIVE_LINK)
+            val runtimeUsage = objectFactory.named(Usage::class.java, Usage.NATIVE_RUNTIME)
+            val konanSoftwareComponent = project.extensions.getByName(KonanPlugin.KONAN_MAIN_VARIANT) as KonanSoftwareComponent
+            konanSoftwareComponent.addVariant(NativeVariant(target.name, linkUsage, null, linkUsage, configuration))
+        }
     }
 
     // DSL.
