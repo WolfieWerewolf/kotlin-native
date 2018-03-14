@@ -47,10 +47,6 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
             add(task.destinationDir) // TODO: Check if task is a library - create a Library interface
             add(task.project.konanLibsBaseDir.targetSubdir(target))
             addAll(artifacts.flatMap { it.libraries.repos })
-            //project.configurations.getByName("konanCompile").dependencies.forEach{
-            //    println(">>> D: ${it.name}")
-            //}
-
         }
 
     val target: KonanTarget
