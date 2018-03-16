@@ -20,8 +20,8 @@ val idlDom = listOf(
                 Attribute("COLOR_BUFFER_BIT", idlInt),
                 //Operation("clearColor", idlVoid, false, Arg("r", idlInt), Arg("g", idlInt), Arg("b", idlInt), Arg("a", idlInt)),
 
-                Operation("clearColor", idlVoid, false, Arg("r", idlInt), Arg("g", idlInt), Arg("b", idlInt), Arg("a", idlDouble)),
-                //Operation("clearColor", idlVoid, false, Arg("r", idlDouble), Arg("g", idlDouble), Arg("b", idlDouble), Arg("a", idlDouble)),
+                //Operation("clearColor", idlVoid, false, Arg("r", idlInt), Arg("g", idlInt), Arg("b", idlInt), Arg("a", idlDouble)),
+                Operation("clearColor", idlVoid, false, Arg("r", idlDouble), Arg("g", idlDouble), Arg("b", idlDouble), Arg("a", idlDouble)),
 
                 Operation("clear", idlVoid, Arg("mask", idlInt))
                 ),

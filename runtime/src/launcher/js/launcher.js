@@ -95,13 +95,16 @@ function toUTF16String(pointer, size) {
     return string;
 }
 
+// function twoIntsToDouble(upper, lower) {
+//     var buffer = new ArrayBuffer(8);
+//     var ints = new Int32Array(buffer);
+//     var doubles = new Float64Array(buffer);
+//     ints[1] = upper;
+//     ints[0] = lower;
+//     return doubles[0];
+// }
 function twoIntsToDouble(upper, lower) {
-    var buffer = new ArrayBuffer(8);
-    var ints = new Int32Array(buffer);
-    var doubles = new Float64Array(buffer);
-    ints[1] = upper;
-    ints[0] = lower;
-    return doubles[0];
+    return +upper + lower
 }
 
 function doubleToTwoInts(value) {
