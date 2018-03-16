@@ -27,6 +27,7 @@ fun Arg.wasmMapping(): String = when (type) {
     is idlVoid -> error("An arg can not be idlVoid")
     is idlInt -> name
     is idlFloat -> name
+    //is idlDouble -> "doubleUpper($name), doubleLower($name)"
     is idlDouble -> "doubleUpper($name), doubleLower($name)"
     is idlString -> "stringPointer($name), stringLengthBytes($name)"
     is idlObject -> TODO("implement me")

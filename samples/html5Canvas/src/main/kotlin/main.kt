@@ -4,11 +4,41 @@ import kotlinx.wasm.jsinterop.*
 fun main(args: Array<String>) {
 
     val canvas = document.getElementById("myCanvas").asCanvas
-    //val ctx = canvas.getContext("2d")
     val gl = canvas.getContext("webgl")
-    gl.clearColor(0, 1, 2, 1)
+    //var a: Double = 1.0
+    //gl.clearColor(0, 1, 2, a)
+    //gl.clear(gl.COLOR_BUFFER_BIT)
+    doClear(gl)
+}
+
+fun doClear(gl: WebGLRenderingContext){
+    //var a: Double = 1.0
+    gl.clearColor(0, 1, 2, 1.0)
     gl.clear(gl.COLOR_BUFFER_BIT)
 
+}
+
+
+
+//var a: Double = 56.3
+//gl.clearColor(0, 1, 2, 1)
+
+//val myabs = abs(-100)
+//println(myabs)
+
+
+//val resultF1 = f1()
+
+//val resultF2 = f2()
+//println(resultF2)
+//println("-----")
+
+
+//@Used
+//public fun f2(): Double {
+//    var a: Double = 56.3
+//    return a
+//}
 
 
 //    val rect = canvas.getBoundingClientRect()
@@ -48,5 +78,3 @@ fun main(args: Array<String>) {
 //            ctx.stroke()
 //        }
 //    }
-}
-

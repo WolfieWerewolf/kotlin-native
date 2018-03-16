@@ -40,15 +40,25 @@ external public fun freeArena(arena: Arena)
 @SymbolName("Konan_js_pushIntToArena")
 external public fun pushIntToArena(arena: Arena, value: Int)
 
-const val upperWord = 0xffffffff.toLong() shl 32
+//const val upperWord = 0xffffffff.toLong() shl 32
 
 @ExportForCppRuntime
-fun doubleUpper(value: Double): Int =
-    ((value.toBits() and upperWord) ushr 32) .toInt()
+fun doubleUpper(value: Double): Int {
+    return value.toString().split(".")[0].toInt()
+    //return ((value.toBits() and upperWord) ushr 32) .toInt()
+}
 
 @ExportForCppRuntime
-fun doubleLower(value: Double): Int =
-    (value.toBits() and 0x00000000ffffffff) .toInt()
+fun doubleLower(value: Double): Int {
+    return value.toString().split(".")[1].toInt()
+    //return (value.toBits() and 0x00000000ffffffff) .toInt()
+}
+
+/**
+function twoIntsToDouble(upper, lower) {
+    return +upper + lower
+}
+ */
 
 @Used
 @SymbolName("ReturnSlot_getDouble")

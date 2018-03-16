@@ -2,26 +2,27 @@ package org.jetbrains.kotlin.native.interop.gen.wasm.idl
 
 // This shall be an output of Web IDL parser.
 val idlDom = listOf(
-    Interface("CanvasRenderingContext2D",
-        Attribute("lineWidth", idlInt),
-        Attribute("fillStyle", idlString),
-        Attribute("strokeStyle", idlString),
-
-        Operation("lineTo", idlVoid, Arg("x", idlInt), Arg("y", idlInt)),
-        Operation("moveTo", idlVoid, Arg("x", idlInt), Arg("y", idlInt)),
-        Operation("beginPath", idlVoid),
-        Operation("stroke", idlVoid),
-        Operation("fillRect", idlVoid, Arg("x", idlInt), Arg("y", idlInt), Arg("width", idlInt), Arg("height", idlInt)),
-        Operation("fillText", idlVoid, Arg("test", idlString), Arg("x", idlInt),  Arg("y", idlInt), Arg("maxWidth", idlInt)),
-        Operation("fill", idlVoid),
-        Operation("closePath", idlVoid)
-    ),
+//    Interface("CanvasRenderingContext2D",
+//        Attribute("lineWidth", idlInt),
+//        Attribute("fillStyle", idlString),
+//        Attribute("strokeStyle", idlString),
+//
+//        Operation("lineTo", idlVoid, Arg("x", idlInt), Arg("y", idlInt)),
+//        Operation("moveTo", idlVoid, Arg("x", idlInt), Arg("y", idlInt)),
+//        Operation("beginPath", idlVoid),
+//        Operation("stroke", idlVoid),
+//        Operation("fillRect", idlVoid, Arg("x", idlInt), Arg("y", idlInt), Arg("width", idlInt), Arg("height", idlInt)),
+//        Operation("fillText", idlVoid, Arg("test", idlString), Arg("x", idlInt),  Arg("y", idlInt), Arg("maxWidth", idlInt)),
+//        Operation("fill", idlVoid),
+//        Operation("closePath", idlVoid)
+//    ),
         Interface("WebGLRenderingContext",
-                Attribute("width", idlInt),
-                Attribute("height", idlInt),
                 Attribute("COLOR_BUFFER_BIT", idlInt),
+                //Operation("clearColor", idlVoid, false, Arg("r", idlInt), Arg("g", idlInt), Arg("b", idlInt), Arg("a", idlInt)),
 
-                Operation("clearColor", idlVoid, Arg("r", idlInt), Arg("g", idlInt), Arg("b", idlInt), Arg("a", idlInt)),
+                Operation("clearColor", idlVoid, false, Arg("r", idlInt), Arg("g", idlInt), Arg("b", idlInt), Arg("a", idlDouble)),
+                //Operation("clearColor", idlVoid, false, Arg("r", idlDouble), Arg("g", idlDouble), Arg("b", idlDouble), Arg("a", idlDouble)),
+
                 Operation("clear", idlVoid, Arg("mask", idlInt))
                 ),
     Interface("DOMRect",
