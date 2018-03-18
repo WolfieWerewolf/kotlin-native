@@ -16,8 +16,15 @@ val idlDom = listOf(
                 Operation("fill", idlVoid),
                 Operation("closePath", idlVoid)
         ),
+        Interface("WebGLShader"),
         Interface("WebGLRenderingContext",
-                Attribute("COLOR_BUFFER_BIT", idlInt),
+                Attribute("COLOR_BUFFER_BIT", idlInt, readOnly = true),
+                Attribute("VERTEX_SHADER", idlInt, readOnly = true),
+                Attribute("FRAGMENT_SHADER", idlInt, readOnly = true),
+                Operation("createShader", idlInterfaceRef("WebGLShader"), false, Arg("type", idlInt)),
+                //Operation("shaderSource", idlVoid, Arg("shader", idlInterfaceRef("WebGLShader")), Arg("source", idlString)),
+                //Operation("compileShader", idlVoid, Arg("shader", idlObject)),
+
                 Operation("clearColor", idlVoid, false, Arg("r", idlDouble), Arg("g", idlDouble), Arg("b", idlDouble), Arg("a", idlDouble)),
                 Operation("clear", idlVoid, Arg("mask", idlInt))
         ),
@@ -45,9 +52,15 @@ val idlDom = listOf(
         Interface("Promise",
                 Operation("then", idlInterfaceRef("Promise"), Arg("lambda", idlFunction))
         ),
+        Interface("Console",
+                Operation("log", idlVoid, Arg("msg", idlString))
+                //Operation("log", idlVoid, Arg("msg", idlInterfaceRef))
+        ),
+
         Interface("__Global",
                 Attribute("document", idlInterfaceRef("Document"), readOnly = true),
                 Operation("fetch", idlInterfaceRef("Promise"), Arg("url", idlString)),
+                Attribute("console", idlInterfaceRef("Console"), readOnly = true),
                 Operation("setInterval", idlVoid, Arg("lambda", idlFunction), Arg("interval", idlInt))
         )
 )

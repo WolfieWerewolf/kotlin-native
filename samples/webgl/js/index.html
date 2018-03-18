@@ -1,0 +1,19 @@
+<html>
+<head>
+<meta charset="utf-8">
+
+<script src="helloWebGl.js"> </script>
+
+
+</head>
+<body>
+<canvas id="glCanvas" width="640" height="480"></canvas>
+<script>
+    var canvas = document.getElementById("glCanvas");
+    var gl = canvas.getContext("webgl");
+    var hello = new HelloWebGL(canvas, gl);
+    hello.draw();
+</script>
+</body>
+</html>
+
