@@ -4,7 +4,7 @@ import kotlinx.wasm.jsinterop.*
 fun main(args: Array<String>) {
 
     val canvas = document.getElementById("glCanvas").asCanvas
-    val gl = canvas.getContext("webgl")
+    val gl = canvas.getContext("webgl").asWebGLRenderingContext
     doClear(gl)
 }
 

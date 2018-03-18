@@ -41,15 +41,3 @@ data class idlInterfaceRef(val name: String): Type
 class Interface(val name: String, vararg val members: Member) {
     val isGlobal = (name == "__Global")
 }
-
-
-//data class Arg(val name: String, val type: Type)
-
-//class Operation(val name: String, val returnType: Type,
-//                override val isStatic: Boolean = false,
-//                vararg val args: Arg): Member {
-//
-//    constructor(name: String, returnType: Type, vararg args: Arg) :
-//        this(name, returnType, false, *args)
-//}
-
