@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.native.interop.gen.wasm.idl
 
+
+
 // This shall be an output of Web IDL parser.
 val idlDom = listOf(
 //    Interface("CanvasRenderingContext2D",
@@ -18,30 +20,24 @@ val idlDom = listOf(
 //    ),
         Interface("WebGLRenderingContext",
                 Attribute("COLOR_BUFFER_BIT", idlInt),
-                //Operation("clearColor", idlVoid, false, Arg("r", idlInt), Arg("g", idlInt), Arg("b", idlInt), Arg("a", idlInt)),
-
-                //Operation("clearColor", idlVoid, false, Arg("r", idlInt), Arg("g", idlInt), Arg("b", idlInt), Arg("a", idlDouble)),
                 Operation("clearColor", idlVoid, false, Arg("r", idlDouble), Arg("g", idlDouble), Arg("b", idlDouble), Arg("a", idlDouble)),
-
                 Operation("clear", idlVoid, Arg("mask", idlInt))
                 ),
-    Interface("DOMRect",
-        Attribute("left", idlInt),
-        Attribute("right", idlInt),
-        Attribute("top", idlInt),
-        Attribute("bottom", idlInt)
-    ),
-    Interface("Canvas",
-        //Operation("getContext", idlInterfaceRef("CanvasRenderingContext2D"), Arg("context", idlString)),
-            Operation("getContext", idlInterfaceRef("WebGLRenderingContext"), Arg("context", idlString)),
-        Operation("getBoundingClientRect", idlInterfaceRef("DOMRect"))
-    ),
+
+        Interface("CanvasRenderingContext2D",
+                Attribute("lineWidth", idlInt),
+                Attribute("fillStyle", idlString)
+                ),
+
+
+        Interface("Canvas",
+                Operation("getContext", idlInterfaceRef("CanvasRenderingContext2D"), Arg("context", idlString), FakeArg("fake", idlString)),
+                Operation("getContext", idlInterfaceRef("WebGLRenderingContext"), Arg("context", idlString))
+        ),
+
+
     Interface("Document",
         Operation("getElementById", idlObject, Arg("id", idlString))
-    ),
-    Interface("MouseEvent",
-        Attribute("clientX", idlInt, readOnly = true),
-        Attribute("clientY", idlInt, readOnly = true)
     ),
     Interface("Response",
         Operation("json", idlObject)
@@ -57,4 +53,8 @@ val idlDom = listOf(
     )
 )
 
-   
+
+//    Interface("Canvas",
+//            //Operation("getContext", idlInterfaceRef("CanvasRenderingContext2D"), Arg("context", idlString)),
+//            Operation("getContext", idlInterfaceRef("WebGLRenderingContext"), Arg("context", idlString))
+//    ),

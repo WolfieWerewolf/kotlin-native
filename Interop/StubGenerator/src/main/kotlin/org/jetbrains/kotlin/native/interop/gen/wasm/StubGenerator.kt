@@ -23,11 +23,10 @@ fun Type.toKotlinType(argName: String? = null): String = when (this) {
     else -> error("Unexpected type")
 }
 
-fun Arg.wasmMapping(): String = when (type) {
+fun IArg.wasmMapping(): String = when (type) {
     is idlVoid -> error("An arg can not be idlVoid")
     is idlInt -> name
     is idlFloat -> name
-    //is idlDouble -> "doubleUpper($name), doubleLower($name)"
     is idlDouble -> "doubleUpper($name), doubleLower($name)"
     is idlString -> "stringPointer($name), stringLengthBytes($name)"
     is idlObject -> TODO("implement me")
@@ -51,7 +50,7 @@ fun Type.wasmReturnArg(): String =
 val Operation.wasmReturnArg: String get() = returnType.wasmReturnArg()
 val Attribute.wasmReturnArg: String get() = type.wasmReturnArg()
 
-fun Arg.wasmArgNames(): List<String> = when (type) {
+fun IArg.wasmArgNames(): List<String> = when (type) {
     is idlVoid -> error("An arg can not be idlVoid")
     is idlInt -> listOf(name)
     is idlFloat -> listOf(name)
@@ -75,11 +74,19 @@ fun Type.wasmReturnMapping(value: String): String = when (this) {
     else -> error("Unexpected type")
 }
 
-fun wasmFunctionName(functionName: String, interfaceName: String)
-    = "knjs__${interfaceName}_$functionName"
+fun wasmFunctionName(operation: Operation, functionName: String, interfaceName: String): String {
+    val toReturn = when{
+        operation.returnType is idlInterfaceRef -> {
+            "knjs__${interfaceName}_${functionName}_${operation.returnType.name}"
+        }
+        else -> "knjs__${interfaceName}_$functionName"
+    }
+    return toReturn
+}
 
-fun wasmSetterName(propertyName: String, interfaceName: String)
-    = "knjs_set__${interfaceName}_$propertyName"
+fun wasmSetterName(propertyName: String, interfaceName: String): String {
+    return "knjs_set__${interfaceName}_$propertyName"
+}
 
 fun wasmGetterName(propertyName: String, interfaceName: String)
     = "knjs_get__${interfaceName}_$propertyName"
@@ -110,30 +117,36 @@ fun Type.generateKotlinCallWithReturn(name: String, wasmArgList: String) =
         else ->         "    val wasmRetVal = ${generateKotlinCall(name, wasmArgList)}\n"
     }
 
-fun Operation.generateKotlinCallWithReturn(parent_name: String, wasmArgList: String) =
-    returnType.generateKotlinCallWithReturn(
-        wasmFunctionName(name, parent_name), 
-        wasmArgList)
+fun Operation.generateKotlinCallWithReturn(operation: Operation, parent_name: String, wasmArgList: String): String {
 
-fun Attribute.generateKotlinGetterCallWithReturn(parent_name: String, wasmArgList: String) =
-    type.generateKotlinCallWithReturn(
-        wasmGetterName(name, parent_name), 
-        wasmArgList)
+    val toReturn = returnType.generateKotlinCallWithReturn(
+            wasmFunctionName(operation, name, parent_name),
+            wasmArgList)
+
+    return toReturn
+}
+
+fun Attribute.generateKotlinGetterCallWithReturn(parent_name: String, wasmArgList: String): String {
+    return type.generateKotlinCallWithReturn(
+            wasmGetterName(name, parent_name),
+            wasmArgList)
+}
 
 fun Operation.generateKotlin(parent: Interface): String {
+
     val argList = args.map {
         "${it.name}: ${it.type.toKotlinType(it.name)}"
     }.joinToString(", ")
 
-    val wasmArgList = (wasmReceiverArgs(parent) + args.map(Arg::wasmMapping) + wasmReturnArg).joinToString(", ")
+    val wasmArgList = (wasmReceiverArgs(parent) + args.map(IArg::wasmMapping) + wasmReturnArg).joinToString(", ")
 
-    // TODO: there can be multiple Rs.
-    return "  fun $kotlinTypeParameters $name(" + 
-    argList + 
-    "): ${returnType.toKotlinType()} {\n" +
-        generateKotlinCallWithReturn(parent.name, wasmArgList) +
-    "    return ${returnType.wasmReturnMapping("wasmRetVal")}\n"+
-    "  }\n\n"
+    val sb = StringBuilder()
+    sb.append("  fun $kotlinTypeParameters $name(" + argList + "): ${returnType.toKotlinType()} {\n")
+    sb.append(generateKotlinCallWithReturn(this, parent.name, wasmArgList))
+    sb.append("    return ${returnType.wasmReturnMapping("wasmRetVal")}\n")
+    sb.append("  }\n\n")
+
+    return sb.toString()
 }
 
 fun Attribute.generateKotlinSetter(parent: Interface): String {
@@ -169,7 +182,9 @@ fun Member.wasmTypedReceiverArgs(parent: Interface) =
     if (isStatic) emptyList() else parent.wasmTypedReceiverArgs
 
 fun Operation.generateWasmStub(parent: Interface): String {
-    val wasmName = wasmFunctionName(this.name, parent.name)
+
+    val wasmName = wasmFunctionName(this, this.name, parent.name)
+
     val allArgs = (wasmTypedReceiverArgs(parent) + args.toList().wasmTypedMapping() + wasmTypedReturnMapping).joinToString(", ")
     return "@SymbolName(\"$wasmName\")\n" +
     "external public fun $wasmName($allArgs): ${returnType.wasmReturnTypeMapping()}\n\n"
@@ -206,7 +221,7 @@ fun Member.generateWasmStub(parent: Interface) =
 
     }
 
-fun Arg.wasmTypedMapping()
+fun IArg.wasmTypedMapping()
     = this.wasmArgNames().map { "$it: Int" } .joinToString(", ")
 
 // TODO: Optimize for simple types.
@@ -216,8 +231,8 @@ val Operation.wasmTypedReturnMapping get() = returnType.wasmTypedReturnMapping()
 
 val Attribute.wasmTypedReturnMapping get() = type.wasmTypedReturnMapping()
 
-fun List<Arg>.wasmTypedMapping()
-    = this.map(Arg::wasmTypedMapping)
+fun List<IArg>.wasmTypedMapping()
+    = this.map(IArg::wasmTypedMapping)
 
 // TODO: more complex return types, such as returning a pair of Ints
 // will require a more complex approach.
@@ -269,18 +284,19 @@ fun Interface.generateKotlin(): String {
         }
 }
 
-fun generateKotlin(pkg: String, interfaces: List<Interface>) =
-    kotlinHeader(pkg) + 
-    interfaces.map {
-        it.generateKotlin()
-    }.joinToString("\n") +
-    if (pkg == "kotlinx.interop.wasm.dom")  // TODO: make it a general solution.
-        "fun <R> setInterval(interval: Int, lambda: KtFunction<R>) = setInterval(lambda, interval)\n"
-    else ""
+fun generateKotlin(pkg: String, interfaces: List<Interface>): String {
+    return kotlinHeader(pkg) +
+            interfaces.map {
+                it.generateKotlin()
+            }.joinToString("\n") +
+            if (pkg == "kotlinx.interop.wasm.dom")  // TODO: make it a general solution.
+                "fun <R> setInterval(interval: Int, lambda: KtFunction<R>) = setInterval(lambda, interval)\n"
+            else ""
+}
 
 /////////////////////////////////////////////////////////
 
-fun Arg.composeWasmArgs(): String = when (type) {
+fun IArg.composeWasmArgs(): String = when (type) {
     is idlVoid -> error("An arg can not be idlVoid")
     is idlInt -> ""
     is idlFloat -> ""
@@ -344,7 +360,7 @@ fun Operation.generateJs(parent: Interface): String {
     val argList = args.map { it.name }. joinToString(", ")
     val composedArgsList = args.map { it.composeWasmArgs() }. joinToString("")
 
-    return "\n  ${wasmFunctionName(this.name, parent.name)}: function($wasmMapping) {\n" +
+    return "\n  ${wasmFunctionName(this, this.name, parent.name)}: function($wasmMapping) {\n" +
         composedArgsList +
         "    var result = ${receiver(parent)}$name($argList);\n" +
         "    return ${returnType.wasmReturnExpression};\n" +
