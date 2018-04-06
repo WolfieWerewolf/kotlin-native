@@ -40,6 +40,10 @@ external public fun freeArena(arena: Arena)
 @SymbolName("Konan_js_pushIntToArena")
 external public fun pushIntToArena(arena: Arena, value: Int)
 
+@Used
+@SymbolName("Konan_js_getIntFromArena")
+external public fun getIntFromArena(arena: Arena, value: String): Int
+
 @ExportForCppRuntime
 fun doubleUpper(value: Double): Int {
     return value.toString().split(".")[0].toInt()

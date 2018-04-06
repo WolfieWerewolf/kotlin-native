@@ -29,9 +29,13 @@ fun IArg.wasmMapping(): String = when (type) {
     is idlFloat -> name
     is idlDouble -> "doubleUpper($name), doubleLower($name)"
     is idlString -> "stringPointer($name), stringLengthBytes($name)"
-    is idlObject -> TODO("implement me")
+    //is idlObject -> TODO("implement me")
+    idlObject -> {
+        name
+    }
     is idlFunction -> "wrapFunction<R$name>($name), ArenaManager.currentArena"
-    is idlInterfaceRef -> TODO("Implement me")
+    //is idlInterfaceRef -> TODO("Implement me")
+    is idlInterfaceRef -> name
     else -> error("Unexpected type")
 }
 
@@ -56,9 +60,15 @@ fun IArg.wasmArgNames(): List<String> = when (type) {
     is idlFloat -> listOf(name)
     is idlDouble -> listOf("${name}Upper", "${name}Lower")
     is idlString -> listOf("${name}Ptr", "${name}Len")
-    is idlObject -> TODO("implement me (idlObject)")
+    is idlObject -> {
+        listOf(name)
+    }
+    //is idlObject -> TODO("implement me (idlObject)")
     is idlFunction -> listOf("${name}Index", "${name}ResultArena")
-    is idlInterfaceRef -> TODO("Implement me (idlInterfaceRef)")
+    //is idlInterfaceRef -> TODO("Implement me (idlInterfaceRef)")
+    is idlInterfaceRef -> {
+        listOf(name)
+    }
     else -> error("Unexpected type")
 }
 
@@ -304,11 +314,15 @@ fun IArg.composeWasmArgs(): String = when (type) {
         "    var $name = twoIntsToDouble(${name}Upper, ${name}Lower);\n"
     is idlString ->
         "    var $name = toUTF16String(${name}Ptr, ${name}Len);\n"
-    is idlObject -> TODO("implement me")
+    //is idlObject -> TODO("implement me")
+    is idlObject -> {
+        " "
+    }
     is idlFunction ->
         "    var $name = konan_dependencies.env.Konan_js_wrapLambda(lambdaResultArena, ${name}Index);\n"
 
-    is idlInterfaceRef -> TODO("Implement me")
+    //is idlInterfaceRef -> TODO("Implement me")
+    is idlInterfaceRef -> "getIntFromArena(0, $name)\n"
     else -> error("Unexpected type")
 }
 
@@ -421,8 +435,8 @@ fun processIdlLib(args: Array<String>): Array<String> {
         else -> throw IllegalArgumentException("Please choose either $idlMathPackage or $idlDomPackage for -pkg argument")
     }
 
-    File(ktGenRoot, "kotlin_stubs.kt").writeText(generateKotlin(arguments.pkg!!, idl))
-    File(nativeLibsDir, "js_stubs.js").writeText(generateJs(idl))
-    File(arguments.manifest!!).writeText("") // The manifest is currently unused for wasm.
+    //File(ktGenRoot, "kotlin_stubs.kt").writeText(generateKotlin(arguments.pkg!!, idl))
+    //File(nativeLibsDir, "js_stubs.js").writeText(generateJs(idl))
+    //File(arguments.manifest!!).writeText("") // The manifest is currently unused for wasm.
     return argsToCompiler(arguments.staticLibrary, arguments.libraryPath)
 }

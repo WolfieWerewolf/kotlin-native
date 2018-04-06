@@ -24,32 +24,20 @@ fun main(args: Array<String>) {
     val canvas = document.getElementById("glCanvas").asCanvas
     val gl = canvas.getContext("webgl").asWebGLRenderingContext
 
-    //println(gl.VERTEX_SHADER)
-    //println(gl.FRAGMENT_SHADER)
+    /** Compile Vertex Shader */
+    //val vertShader = gl.createShader(gl.VERTEX_SHADER).asWebGLShader
 
-    /** Compile Vertex Sader */
-    val vertShader = gl.createShader(gl.VERTEX_SHADER)
-    val vertSource = getVertShaderSource()
+    //println(vertShader.index)
 
-    println(vertShader)
+    val test = "testing123";
 
-    //console.log(vertShader)
+    console.log(canvas)
+
+
+    //val vertSource = getVertShaderSource()
 
     //gl.shaderSource(vertShader, vertSource)
 
-    //gl.compileShader(vertShader)
-
-
-    //println(vertShader)
-
-    //println("getVertShaderSource---------------------")
-    //println(getVertShaderSource())
-
-    //println("getFragShaderSource---------------------")
-    //println(getFragShaderSource())
 
     doClear(gl)
-
-    //val hello = HelloWebGL(canvas, gl)
-    //hello.draw()
 }

@@ -2,20 +2,20 @@ package org.jetbrains.kotlin.native.interop.gen.wasm.idl
 
 /** This shall be an output of Web IDL parser. */
 val idlDom = listOf(
-        Interface("CanvasRenderingContext2D",
-                Attribute("lineWidth", idlInt),
-                Attribute("fillStyle", idlString),
-                Attribute("strokeStyle", idlString),
-
-                Operation("lineTo", idlVoid, Arg("x", idlInt), Arg("y", idlInt)),
-                Operation("moveTo", idlVoid, Arg("x", idlInt), Arg("y", idlInt)),
-                Operation("beginPath", idlVoid),
-                Operation("stroke", idlVoid),
-                Operation("fillRect", idlVoid, Arg("x", idlInt), Arg("y", idlInt), Arg("width", idlInt), Arg("height", idlInt)),
-                Operation("fillText", idlVoid, Arg("test", idlString), Arg("x", idlInt),  Arg("y", idlInt), Arg("maxWidth", idlInt)),
-                Operation("fill", idlVoid),
-                Operation("closePath", idlVoid)
-        ),
+//        Interface("CanvasRenderingContext2D",
+//                Attribute("lineWidth", idlInt),
+//                Attribute("fillStyle", idlString),
+//                Attribute("strokeStyle", idlString),
+//
+//                Operation("lineTo", idlVoid, Arg("x", idlInt), Arg("y", idlInt)),
+//                Operation("moveTo", idlVoid, Arg("x", idlInt), Arg("y", idlInt)),
+//                Operation("beginPath", idlVoid),
+//                Operation("stroke", idlVoid),
+//                Operation("fillRect", idlVoid, Arg("x", idlInt), Arg("y", idlInt), Arg("width", idlInt), Arg("height", idlInt)),
+//                Operation("fillText", idlVoid, Arg("test", idlString), Arg("x", idlInt),  Arg("y", idlInt), Arg("maxWidth", idlInt)),
+//                Operation("fill", idlVoid),
+//                Operation("closePath", idlVoid)
+//        ),
         Interface("WebGLShader"),
         Interface("WebGLRenderingContext",
                 Attribute("COLOR_BUFFER_BIT", idlInt, readOnly = true),
@@ -35,8 +35,8 @@ val idlDom = listOf(
                 Attribute("bottom", idlInt)
         ),
         Interface("Canvas",
-                Operation("getContext", idlInterfaceRef("CanvasRenderingContext2D"), Arg("context", idlString)),
-                Operation("getContext", idlInterfaceRef("WebGLRenderingContext"), Arg("context", idlString), FakeArg("fake", idlString)),
+                //Operation("getContext", idlInterfaceRef("CanvasRenderingContext2D"), Arg("context", idlString)),
+                Operation("getContext", idlInterfaceRef("WebGLRenderingContext"), Arg("context", idlString)),
                 Operation("getBoundingClientRect", idlInterfaceRef("DOMRect"))
         ),
         Interface("Document",
